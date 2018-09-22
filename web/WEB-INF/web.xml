@@ -16,6 +16,18 @@
         <servlet-name>Login</servlet-name>
         <servlet-class>api.Login</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>SearchUser</servlet-name>
+        <servlet-class>api.SearchUser</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddFriend</servlet-name>
+        <servlet-class>api.AddFriend</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>FriendList</servlet-name>
+        <servlet-class>api.FriendList</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Auth</servlet-name>
         <url-pattern>/auth</url-pattern>
@@ -31,6 +43,18 @@
     <servlet-mapping>
         <servlet-name>Login</servlet-name>
         <url-pattern>/login</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SearchUser</servlet-name>
+        <url-pattern>/search-user</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddFriend</servlet-name>
+        <url-pattern>/add-friend</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FriendList</servlet-name>
+        <url-pattern>/friend-list</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

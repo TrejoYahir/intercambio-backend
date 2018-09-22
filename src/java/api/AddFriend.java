@@ -16,13 +16,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import libraries.Utils;
+import models.Friendship;
 import models.User;
 
 /**
  *
  * @author Yahir
  */
-public class Login extends HttpServlet {
+public class AddFriend extends HttpServlet {
 
     /**
      * Handles the HTTP <code>POST</code> method.
@@ -35,33 +36,29 @@ public class Login extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
         
+        Gson gson = new Gson();
         JsonObject resp = new JsonObject();
         String requestData = Utils.getBody(request);
-        Gson gson = new Gson();
+        User user;
         
         System.out.println("data: " + requestData);
         
-        User data = gson.fromJson(requestData, User.class);
-        User user = Queries.searchUser(data);
+        Friendship data = gson.fromJson(requestData, Friendship.class);
+        user = Queries.saveFriendship(data);
 
         try (PrintWriter out = response.getWriter();) {
-            
             if(user.id != 0) {
-                String u = gson.toJson(user);
                 resp.addProperty("success", true);
-                resp.addProperty("message", "Sesión iniciada");
-                resp.addProperty("user", u);
-                System.out.println("Response: " + resp);
+                resp.addProperty("message", "Amigo agregado");
+                resp.addProperty("friend", gson.toJson(user));
             } else {
-                System.out.println("Error creating user");
                 resp.addProperty("success", false);
-                resp.addProperty("message", "Usuario o contraseña incorrectos.");
+                resp.addProperty("message", "Error al agregar amigo");
             }
-            out.print(resp.toString()); 
+            out.print(resp); 
         }
     }
 
@@ -73,6 +70,6 @@ public class Login extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }
 
 }

@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import models.Friendship;
 import models.User;
 import models.Users;
 
@@ -21,7 +22,7 @@ import models.Users;
  */
 public class Queries {
     
-    public static synchronized ArrayList<User> searchUser(User user){
+    public static synchronized ArrayList<User> userExists(User user){
         Connection cn = null;
         CallableStatement cs = null;
         ResultSet rs = null;
@@ -61,7 +62,7 @@ public class Queries {
         return results;
     }
     
-        public static synchronized User searchUserByLogin(User user){
+    public static synchronized User searchUser(User user){
         Connection cn = null;
         CallableStatement cs = null;
         ResultSet rs = null;
@@ -73,6 +74,42 @@ public class Queries {
             cs=cn.prepareCall("SELECT * FROM Users WHERE email = ? AND pass = ?");
             cs.setString(1, user.email);
             cs.setString(2, user.pass);
+            rs=cs.executeQuery();
+            if(rs.next()) {
+                u.firstName = rs.getString("firstName");
+                u.lastName = rs.getString("lastName");
+                u.alias = rs.getString("alias");
+                u.email = rs.getString("email");
+                u.id = rs.getInt("id");
+            }
+            cn.commit();
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+            Conexion.closeResultset(rs);
+        } catch (SQLException e){
+            System.err.print("searchUserByLogin sql error" + e);
+            e.printStackTrace();
+            Conexion.rollback(cn);
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+        } catch (Exception e){
+             System.err.print("searchUserByLogin error" + e);
+             e.printStackTrace();
+        }
+        return u;
+    }
+    
+    public static synchronized User searchUserById(int id){
+        Connection cn = null;
+        CallableStatement cs = null;
+        ResultSet rs = null;
+        User u = new User();
+        
+        try{
+            cn=Conexion.getConexion();
+            cn.setAutoCommit(false);
+            cs=cn.prepareCall("SELECT * FROM Users WHERE id = ?");
+            cs.setInt(1, id);
             rs=cs.executeQuery();
             if(rs.next()) {
                 u.firstName = rs.getString("firstName");
@@ -132,4 +169,117 @@ public class Queries {
         return r;
     }
     
+    public static synchronized ArrayList<User> searchUsers(String keyword){
+        Connection cn = null;
+        CallableStatement cs = null;
+        ResultSet rs = null;
+        ArrayList<User> results = new ArrayList<>();
+        
+        try{
+            cn=Conexion.getConexion();
+            cn.setAutoCommit(false);
+            cs=cn.prepareCall("SELECT id, firstName, lastName, email, alias FROM Users WHERE email LIKE ? OR alias LIKE ? OR firstName LIKE ? OR lastName LIKE ?");
+            cs.setString(1, "%" + keyword + "%");
+            cs.setString(2, "%" + keyword + "%");
+            cs.setString(3, "%" + keyword + "%");
+            cs.setString(4, "%" + keyword + "%");
+
+            rs=cs.executeQuery();
+            while(rs.next()) {
+                User u = new User();
+                u.firstName = rs.getString("firstName");
+                u.lastName = rs.getString("lastName");
+                u.alias = rs.getString("alias");
+                u.email = rs.getString("email");
+                u.id = rs.getInt("id");
+                results.add(u);
+            }
+            cn.commit();
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+            Conexion.closeResultset(rs);
+        } catch (SQLException e){
+            System.err.print("searchUser sql error" + e);
+            e.printStackTrace();
+            Conexion.rollback(cn);
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+        } catch (Exception e){
+             System.err.print("searchUser error" + e);
+             e.printStackTrace();
+        }
+        System.out.println("results length " + results.size());
+        return results;
+    }
+    
+    public static synchronized User saveFriendship(Friendship f){
+        Connection cn = null;
+        CallableStatement cs = null;
+        Boolean result = false;
+        System.out.println("user1 " + f.idUser1);
+        System.out.println("user2 " + f.idUser2);
+        User user = new User();
+        try{
+            cn=Conexion.getConexion();
+            cn.setAutoCommit(false);
+            cs=cn.prepareCall("{call saveFriendship(?,?)}");
+            cs.setInt(1, f.idUser1);
+            cs.setInt(2, f.idUser2);
+            result=cs.executeUpdate() == 1;
+            cn.commit();
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+            user = Queries.searchUserById(f.idUser2);
+        } catch (SQLException e){
+            System.err.print("searchUser sql error" + e);
+            e.printStackTrace();
+            Conexion.rollback(cn);
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+        } catch (Exception e){
+             System.err.print("searchUser error" + e);
+             e.printStackTrace();
+        }
+        return user;
+    }
+    
+    public static synchronized ArrayList<User> getFriendList(int id){
+        Connection cn = null;
+        CallableStatement cs = null;
+        ResultSet rs = null;
+        ArrayList<User> results = new ArrayList<>();
+        
+        try{
+            cn=Conexion.getConexion();
+            cn.setAutoCommit(false);
+            cs=cn.prepareCall("{call getFriendList(?)}");
+            cs.setInt(1, id);
+
+            rs=cs.executeQuery();
+            while(rs.next()) {
+                User u = new User();
+                u.firstName = rs.getString("firstName");
+                u.lastName = rs.getString("lastName");
+                u.alias = rs.getString("alias");
+                u.email = rs.getString("email");
+                u.id = rs.getInt("id");
+                results.add(u);
+            }
+            cn.commit();
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+            Conexion.closeResultset(rs);
+        } catch (SQLException e){
+            System.err.print("searchUser sql error" + e);
+            e.printStackTrace();
+            Conexion.rollback(cn);
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+        } catch (Exception e){
+             System.err.print("searchUser error" + e);
+             e.printStackTrace();
+        }
+        System.out.println("results length " + results.size());
+        return results;
+    }
 }

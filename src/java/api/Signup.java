@@ -55,7 +55,7 @@ public class Signup extends HttpServlet {
         System.out.println("data: " + data);
         
         User user = gson.fromJson(data, User.class);
-        existingUsers = Queries.searchUser(user);
+        existingUsers = Queries.userExists(user);
         System.out.println("ExistingUsers size " + existingUsers.size());
 
         try (PrintWriter out = response.getWriter();) {

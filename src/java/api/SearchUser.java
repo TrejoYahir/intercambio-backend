@@ -17,15 +17,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import libraries.Utils;
 import models.User;
+import org.json.simple.JSONArray;
 
 /**
  *
  * @author Yahir
  */
-public class Login extends HttpServlet {
+public class SearchUser extends HttpServlet {
 
     /**
-     * Handles the HTTP <code>POST</code> method.
+     * Handles the HTTP <code>GET</code> method.
      *
      * @param request servlet request
      * @param response servlet response
@@ -33,35 +34,24 @@ public class Login extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
         
-        JsonObject resp = new JsonObject();
-        String requestData = Utils.getBody(request);
+        ArrayList<User> results;
         Gson gson = new Gson();
-        
-        System.out.println("data: " + requestData);
-        
-        User data = gson.fromJson(requestData, User.class);
-        User user = Queries.searchUser(data);
+        String keyword = request.getParameter("keyword");
+        results = Queries.searchUsers(keyword);
+        String userList;
+        System.out.println("Resultset size " + results.size());
 
         try (PrintWriter out = response.getWriter();) {
-            
-            if(user.id != 0) {
-                String u = gson.toJson(user);
-                resp.addProperty("success", true);
-                resp.addProperty("message", "Sesión iniciada");
-                resp.addProperty("user", u);
-                System.out.println("Response: " + resp);
-            } else {
-                System.out.println("Error creating user");
-                resp.addProperty("success", false);
-                resp.addProperty("message", "Usuario o contraseña incorrectos.");
-            }
-            out.print(resp.toString()); 
+            userList = gson.toJson(results);
+            System.out.println("Response: " + userList);
+
+            out.print(userList); 
         }
     }
 
@@ -73,6 +63,6 @@ public class Login extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }
 
 }
