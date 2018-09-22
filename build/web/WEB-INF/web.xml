@@ -6,7 +6,15 @@
     </servlet>
     <servlet>
         <servlet-name>User</servlet-name>
-        <servlet-class>api.User</servlet-class>
+        <servlet-class>api.UserData</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Signup</servlet-name>
+        <servlet-class>api.Signup</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Login</servlet-name>
+        <servlet-class>api.Login</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Auth</servlet-name>
@@ -16,39 +24,45 @@
         <servlet-name>User</servlet-name>
         <url-pattern>/User</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Signup</servlet-name>
+        <url-pattern>/signup</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Login</servlet-name>
+        <url-pattern>/login</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
         </session-timeout>
     </session-config>
-    
     <filter>
         <filter-name>CorsFilter</filter-name>
         <filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
         <init-param>
-          <param-name>cors.allowed.origins</param-name>
-          <param-value>*</param-value>
+            <param-name>cors.allowed.origins</param-name>
+            <param-value>*</param-value>
         </init-param>
         <init-param>
-          <param-name>cors.allowed.methods</param-name>
-          <param-value>GET,POST,HEAD,OPTIONS,PUT</param-value>
+            <param-name>cors.allowed.methods</param-name>
+            <param-value>GET,POST,HEAD,OPTIONS,PUT</param-value>
         </init-param>
         <init-param>
-          <param-name>cors.allowed.headers</param-name>
-          <param-value>Content-Type,X-Requested-With,accept,Origin,Access-Control-Request-Method,Access-Control-Request-Headers</param-value>
+            <param-name>cors.allowed.headers</param-name>
+            <param-value>Content-Type,X-Requested-With,accept,Origin,Access-Control-Request-Method,Access-Control-Request-Headers</param-value>
         </init-param>
         <init-param>
-          <param-name>cors.exposed.headers</param-name>
-          <param-value>Access-Control-Allow-Origin,Access-Control-Allow-Credentials</param-value>
+            <param-name>cors.exposed.headers</param-name>
+            <param-value>Access-Control-Allow-Origin,Access-Control-Allow-Credentials</param-value>
         </init-param>
         <init-param>
-          <param-name>cors.preflight.maxage</param-name>
-          <param-value>10</param-value>
+            <param-name>cors.preflight.maxage</param-name>
+            <param-value>10</param-value>
         </init-param>
     </filter>
     <filter-mapping>
-      <filter-name>CorsFilter</filter-name>
-      <url-pattern>/*</url-pattern>
+        <filter-name>CorsFilter</filter-name>
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
-    
 </web-app>

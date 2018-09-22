@@ -19,15 +19,15 @@ public class Utils {
     
     public static String getBody(HttpServletRequest request) throws IOException {
 
-    StringBuilder buffer = new StringBuilder();
-    BufferedReader reader = request.getReader();
-    String line;
-    while ((line = reader.readLine()) != null) {
-        buffer.append(line);
+        StringBuilder buffer = new StringBuilder();
+        BufferedReader reader = request.getReader();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            buffer.append(line);
+        }
+        String data = buffer.toString();
+
+        return data;
     }
-    String data = buffer.toString();
-    
-    return data;
-}
     
 }
