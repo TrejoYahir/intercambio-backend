@@ -28,6 +28,38 @@
         <servlet-name>FriendList</servlet-name>
         <servlet-class>api.FriendList</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AddExchange</servlet-name>
+        <servlet-class>api.AddExchange</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ExchangeList</servlet-name>
+        <servlet-class>api.ExchangeList</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GetExchange</servlet-name>
+        <servlet-class>api.GetExchange</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GetInvites</servlet-name>
+        <servlet-class>api.GetInvites</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>JoinExchange</servlet-name>
+        <servlet-class>api.JoinExchange</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>LeaveExchange</servlet-name>
+        <servlet-class>api.LeaveExchange</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteExchange</servlet-name>
+        <servlet-class>api.DeleteExchange</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddParticipant</servlet-name>
+        <servlet-class>api.AddParticipant</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Auth</servlet-name>
         <url-pattern>/auth</url-pattern>
@@ -55,6 +87,38 @@
     <servlet-mapping>
         <servlet-name>FriendList</servlet-name>
         <url-pattern>/friend-list</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddExchange</servlet-name>
+        <url-pattern>/add-exchange</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ExchangeList</servlet-name>
+        <url-pattern>/exchange-list</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetExchange</servlet-name>
+        <url-pattern>/get-exchange</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetInvites</servlet-name>
+        <url-pattern>/get-invites</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>JoinExchange</servlet-name>
+        <url-pattern>/join-exchange</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LeaveExchange</servlet-name>
+        <url-pattern>/leave-exchange</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteExchange</servlet-name>
+        <url-pattern>/delete-exchange</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddParticipant</servlet-name>
+        <url-pattern>/add-participant</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

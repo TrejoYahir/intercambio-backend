@@ -24,7 +24,7 @@ public class Conexion{
         host = "localhost";
         user = "root";
         password = "root1234";
-        database = "exchangesProyect";
+        database = "wadProyect";
         parameters = "?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&autoReconnect=true&useSSL=false";
         
 
