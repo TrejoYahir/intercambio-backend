@@ -60,6 +60,22 @@
         <servlet-name>AddParticipant</servlet-name>
         <servlet-class>api.AddParticipant</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>SavePairs</servlet-name>
+        <servlet-class>api.SavePairs</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GetPairs</servlet-name>
+        <servlet-class>api.GetPairs</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeletePairs</servlet-name>
+        <servlet-class>api.DeletePairs</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EditExchange</servlet-name>
+        <servlet-class>api.EditExchange</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Auth</servlet-name>
         <url-pattern>/auth</url-pattern>
@@ -119,6 +135,22 @@
     <servlet-mapping>
         <servlet-name>AddParticipant</servlet-name>
         <url-pattern>/add-participant</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SavePairs</servlet-name>
+        <url-pattern>/save-pairs</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetPairs</servlet-name>
+        <url-pattern>/get-pairs</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeletePairs</servlet-name>
+        <url-pattern>/delete-pairs</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditExchange</servlet-name>
+        <url-pattern>/edit-exchange</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

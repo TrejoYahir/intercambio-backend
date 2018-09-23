@@ -417,6 +417,7 @@ public class Queries {
                 ex.limitDate = rs.getString("limitDate");
                 ex.exchangeDate = rs.getString("exchangeDate");
                 ex.id = rs.getInt("id");
+                ex.maxAmount = rs.getInt("maxAmount");
                 ex.idCreator = rs.getInt("idCreator");
                 ex.accessCode = rs.getString("accessCode");
             }
@@ -461,6 +462,7 @@ public class Queries {
                 e.accessCode = rs.getString("accessCode");
                 e.participantList = Queries.getExchangeParticipants(e.id);
                 e.giftThemesList = Queries.getExchangeThemes(e.id);
+                e.maxAmount = rs.getInt("maxAmount");
                 results.add(e);
             }
             cn.commit();
@@ -501,6 +503,7 @@ public class Queries {
                 e.limitDate = rs.getString("limitDate");
                 e.exchangeDate = rs.getString("exchangeDate");
                 e.id = rs.getInt("id");
+                e.maxAmount = rs.getInt("maxAmount");
                 e.idCreator = rs.getInt("idCreator");
                 e.accessCode = rs.getString("accessCode");
                 e.participantList = Queries.getExchangeParticipants(e.id);
@@ -620,6 +623,7 @@ public class Queries {
                 ex.exchangeDescription = rs.getString("exchangeDescription");
                 ex.limitDate = rs.getString("limitDate");
                 ex.exchangeDate = rs.getString("exchangeDate");
+                ex.maxAmount = rs.getInt("maxAmount");
                 ex.id = rs.getInt("id");
                 ex.idCreator = rs.getInt("idCreator");
                 ex.accessCode = rs.getString("accessCode");
@@ -722,6 +726,175 @@ public class Queries {
             Conexion.closeConexion(cn);
         } catch (Exception e){
              e.printStackTrace();
+        }
+        return response;
+    }
+    
+    public static synchronized Boolean savePairs(int pairs[][], int idExchange) {
+
+        Connection cn = null;
+        CallableStatement cs;
+        boolean r = true;
+        String sql = "INSERT INTO Pairs (idExchange, idUser1, idUser2) VALUES ";
+        for (int i = 0; i<pairs.length-1; i++) {
+            sql += "(" + idExchange  + ", " + pairs[i][0] + ", " + pairs[i][1] + "),";
+        }
+        
+        sql += "(" + idExchange  + ", " + pairs[pairs.length-1][0] + ", " + pairs[pairs.length-1][1] + ");";
+        
+        System.out.println("save pairs sql " + sql);
+        
+        try{
+            cn=Conexion.getConexion();
+            cn.setAutoCommit(false);
+            cs = cn.prepareCall(sql);
+            cs.executeUpdate();
+            cn.commit();
+            cs.close();
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+        } catch (SQLException e){
+            System.out.println("SQL Exception " + e);
+            e.printStackTrace();
+            Conexion.rollback(cn);
+            Conexion.closeConexion(cn);
+        } catch (Exception e){
+             System.out.println("Exception " + e);
+             e.printStackTrace();
+        }
+        return r;
+    }
+    
+    public static synchronized ArrayList<int[]> getPairs(String code){
+        Connection cn = null;
+        CallableStatement cs = null;
+        ResultSet rs = null;
+        ArrayList<int[]> results = new ArrayList<>();
+        
+        try{
+            cn=Conexion.getConexion();
+            cn.setAutoCommit(false);
+            cs=cn.prepareCall("{call getPairs(?)}");
+            cs.setString(1, code);
+
+            rs=cs.executeQuery();
+            while(rs.next()) {
+                System.out.println("has results user 1 " + rs.getInt("idUser1"));
+
+                int[] i = new int[2];
+                i[0] = rs.getInt("idUser1");
+                i[1] = rs.getInt("idUser2");
+                results.add(i);
+            }
+            cn.commit();
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+            Conexion.closeResultset(rs);
+        } catch (SQLException e){
+            System.err.print("searchUser sql error" + e);
+            e.printStackTrace();
+            Conexion.rollback(cn);
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+        } catch (Exception e){
+             System.err.print("searchUser error" + e);
+             e.printStackTrace();
+        }
+        return results;
+    }
+    
+    public static synchronized Boolean deletePairs(int idExchange){
+        Connection cn = null;
+        CallableStatement cs = null;
+        Boolean result = true;
+        System.out.println("exchange " + idExchange);
+        try{
+            cn=Conexion.getConexion();
+            cn.setAutoCommit(false);
+            cs=cn.prepareCall("DELETE FROM Pairs WHERE idExchange = ?");
+            cs.setInt(1, idExchange);
+            cs.executeUpdate();
+            cn.commit();
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+        } catch (SQLException e){
+            System.err.print("searchUser sql error" + e);
+            e.printStackTrace();
+            Conexion.rollback(cn);
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+        } catch (Exception e){
+             System.err.print("searchUser error" + e);
+             e.printStackTrace();
+        }
+        return result;
+    }
+    
+    public static synchronized Boolean deleteExchangeThemes(int idExchange){
+        Connection cn = null;
+        CallableStatement cs = null;
+        Boolean result = true;
+        System.out.println("exchange " + idExchange);
+        try{
+            cn=Conexion.getConexion();
+            cn.setAutoCommit(false);
+            cs=cn.prepareCall("DELETE FROM Themes WHERE idExchange = ?");
+            cs.setInt(1, idExchange);
+            cs.executeUpdate();
+            cn.commit();
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+        } catch (SQLException e){
+            System.err.print("searchUser sql error" + e);
+            e.printStackTrace();
+            Conexion.rollback(cn);
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+        } catch (Exception e){
+             System.err.print("searchUser error" + e);
+             e.printStackTrace();
+        }
+        return result;
+    }
+    
+    public static synchronized boolean editExchange(Exchange exchange) {
+
+        Connection cn = null;
+        CallableStatement cs = null;
+        boolean response = true;
+        
+        try{
+            cn=Conexion.getConexion();
+            cn.setAutoCommit(false);
+            cs=cn.prepareCall("UPDATE Exchanges SET exchangeName = ?, exchangeDescription = ?, exchangeDate = ?, limitDate = ?, maxAmount = ?, accessCode = ?, idCreator=? WHERE id = ?");
+            cs.setString(1, exchange.exchangeName);
+            cs.setString(2, exchange.exchangeDescription);
+            cs.setString(3, exchange.exchangeDate);
+            cs.setString(4, exchange.limitDate);
+            cs.setInt(5, exchange.maxAmount);
+            cs.setString(6, exchange.accessCode);
+            cs.setInt(7, exchange.idCreator);
+            cs.setInt(8, exchange.id);
+            cs.executeUpdate();
+            cn.commit();
+            Queries.deleteExchangeThemes(exchange.id);
+            Queries.insertExchangeThemes(exchange.id, exchange.giftThemes);
+            System.out.println("themes inserted");
+            Queries.insertExchangeParticipants(exchange.id, exchange.participants);
+            System.out.println("participants inserted");
+            System.out.println("");
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+            
+        } catch (SQLException e){
+            e.printStackTrace();
+            Conexion.rollback(cn);
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+            response = false;
+        } catch (Exception e){
+            e.printStackTrace();
+            response = false;
         }
         return response;
     }
