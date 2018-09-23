@@ -866,15 +866,14 @@ public class Queries {
         try{
             cn=Conexion.getConexion();
             cn.setAutoCommit(false);
-            cs=cn.prepareCall("UPDATE Exchanges SET exchangeName = ?, exchangeDescription = ?, exchangeDate = ?, limitDate = ?, maxAmount = ?, accessCode = ?, idCreator=? WHERE id = ?");
+            cs=cn.prepareCall("UPDATE Exchanges SET exchangeName = ?, exchangeDescription = ?, exchangeDate = ?, limitDate = ?, maxAmount = ?, idCreator=? WHERE id = ?");
             cs.setString(1, exchange.exchangeName);
             cs.setString(2, exchange.exchangeDescription);
             cs.setString(3, exchange.exchangeDate);
             cs.setString(4, exchange.limitDate);
             cs.setInt(5, exchange.maxAmount);
-            cs.setString(6, exchange.accessCode);
-            cs.setInt(7, exchange.idCreator);
-            cs.setInt(8, exchange.id);
+            cs.setInt(6, exchange.idCreator);
+            cs.setInt(7, exchange.id);
             cs.executeUpdate();
             cn.commit();
             Queries.deleteExchangeThemes(exchange.id);
