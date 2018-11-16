@@ -36,7 +36,10 @@ public class Conexion{
             //Creamos la conexión a la base de datos
             Class.forName("com.mysql.cj.jdbc.Driver");
             cn=DriverManager.getConnection(url,user,password);
+            System.out.println("Conectado a base");
         } catch (Exception e){
+            System.out.println("Error al conectar a la base " + e.toString());
+            System.out.println(e);
             //Imprimimos error en caso de que haya
             e.printStackTrace();
         } finally {
