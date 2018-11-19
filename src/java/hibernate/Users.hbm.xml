@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 18/11/2018 05:40:20 PM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="hibernate.Users" table="Users" catalog="wadProyect" optimistic-lock="version">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="email" type="string">
+            <column name="email" length="100" not-null="true" />
+        </property>
+        <property name="firstName" type="string">
+            <column name="firstName" length="50" not-null="true" />
+        </property>
+        <property name="lastName" type="string">
+            <column name="lastName" length="100" not-null="true" />
+        </property>
+        <property name="alias" type="string">
+            <column name="alias" length="20" not-null="true" />
+        </property>
+        <property name="pass" type="string">
+            <column name="pass" length="30" not-null="true" />
+        </property>
+        <set name="exchangeses" table="Exchanges" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="idCreator" not-null="true" />
+            </key>
+            <one-to-many class="hibernate.Exchanges" />
+        </set>
+        <set name="friendListsForIdUser2" table="FriendList" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="idUser2" not-null="true" />
+            </key>
+            <one-to-many class="hibernate.FriendList" />
+        </set>
+        <set name="participantLists" table="ParticipantList" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="idUser" not-null="true" />
+            </key>
+            <one-to-many class="hibernate.ParticipantList" />
+        </set>
+        <set name="friendListsForIdUser1" table="FriendList" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="idUser1" not-null="true" />
+            </key>
+            <one-to-many class="hibernate.FriendList" />
+        </set>
+        <set name="pairses" table="Pairs" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="idUser1" not-null="true" />
+            </key>
+            <one-to-many class="hibernate.Pairs" />
+        </set>
+        <set name="pairses_1" table="Pairs" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="idUser1" not-null="true" />
+            </key>
+            <one-to-many class="hibernate.Pairs" />
+        </set>
+    </class>
+</hibernate-mapping>

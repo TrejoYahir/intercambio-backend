@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 18/11/2018 05:40:20 PM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="hibernate.Exchanges" table="Exchanges" catalog="wadProyect" optimistic-lock="version">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="users" class="hibernate.Users" fetch="select">
+            <column name="idCreator" not-null="true" />
+        </many-to-one>
+        <property name="exchangeName" type="string">
+            <column name="exchangeName" length="100" not-null="true" />
+        </property>
+        <property name="maxAmount" type="float">
+            <column name="maxAmount" precision="12" scale="0" not-null="true" />
+        </property>
+        <property name="limitDate" type="string">
+            <column name="limitDate" length="20" not-null="true" />
+        </property>
+        <property name="exchangeDate" type="string">
+            <column name="exchangeDate" length="20" not-null="true" />
+        </property>
+        <property name="exchangeDescription" type="string">
+            <column name="exchangeDescription" length="300" not-null="true" />
+        </property>
+        <property name="accessCode" type="string">
+            <column name="accessCode" length="8" not-null="true" />
+        </property>
+        <set name="participantLists" table="ParticipantList" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="idExchange" not-null="true" />
+            </key>
+            <one-to-many class="hibernate.ParticipantList" />
+        </set>
+        <set name="themeses" table="Themes" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="idExchange" not-null="true" />
+            </key>
+            <one-to-many class="hibernate.Themes" />
+        </set>
+        <set name="pairses" table="Pairs" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="idExchange" not-null="true" />
+            </key>
+            <one-to-many class="hibernate.Pairs" />
+        </set>
+    </class>
+</hibernate-mapping>
