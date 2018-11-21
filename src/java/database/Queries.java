@@ -5,17 +5,11 @@
  */
 package database;
 
-import com.google.gson.Gson;
 import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import models.Exchange;
 import models.Friendship;
 import models.Participant;
@@ -46,6 +40,7 @@ public class Queries {
                 u.lastName = rs.getString("lastName");
                 u.alias = rs.getString("alias");
                 u.email = rs.getString("email");
+                u.external = rs.getBoolean("external");
                 u.id = rs.getInt("id");
                 results.add(u);
             }
@@ -85,6 +80,7 @@ public class Queries {
                 u.lastName = rs.getString("lastName");
                 u.alias = rs.getString("alias");
                 u.email = rs.getString("email");
+                u.external = rs.getBoolean("external");
                 u.id = rs.getInt("id");
             }
             cn.commit();
@@ -121,6 +117,7 @@ public class Queries {
                 u.lastName = rs.getString("lastName");
                 u.alias = rs.getString("alias");
                 u.email = rs.getString("email");
+                u.external = rs.getBoolean("external");
                 u.id = rs.getInt("id");
             }
             cn.commit();
@@ -140,6 +137,43 @@ public class Queries {
         return u;
     }
     
+    public static synchronized User searchUserByEmail(String email){
+        Connection cn = null;
+        CallableStatement cs = null;
+        ResultSet rs = null;
+        User u = new User();
+        
+        try{
+            cn=Conexion.getConexion();
+            cn.setAutoCommit(false);
+            cs=cn.prepareCall("SELECT * FROM Users WHERE email = ?");
+            cs.setString(1, email);
+            rs=cs.executeQuery();
+            if(rs.next()) {
+                u.firstName = rs.getString("firstName");
+                u.lastName = rs.getString("lastName");
+                u.alias = rs.getString("alias");
+                u.email = rs.getString("email");
+                u.external = rs.getBoolean("external");
+                u.id = rs.getInt("id");
+            }
+            cn.commit();
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+            Conexion.closeResultset(rs);
+        } catch (SQLException e){
+            System.err.print("searchUserByEmail sql error" + e);
+            e.printStackTrace();
+            Conexion.rollback(cn);
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+        } catch (Exception e){
+             System.err.print("searchUserByEmail error" + e);
+             e.printStackTrace();
+        }
+        return u;
+    }
+    
     public static synchronized int createUser(User user) {
         Connection cn = null;
         CallableStatement cs = null;
@@ -149,12 +183,13 @@ public class Queries {
         try{
             cn=Conexion.getConexion();
             cn.setAutoCommit(false);
-            cs=cn.prepareCall("INSERT INTO Users (email, firstName, lastName, alias, pass) values (?, ?, ?, ?, ?)");
+            cs=cn.prepareCall("INSERT INTO Users (email, firstName, lastName, alias, pass, external) values (?, ?, ?, ?, ?, ?)");
             cs.setString(1, user.email);
             cs.setString(2, user.firstName);
             cs.setString(3, user.lastName);
             cs.setString(4, user.alias);
             cs.setString(5, user.pass);
+            cs.setBoolean(6, false);
             cs.executeUpdate();
             rs = cs.getGeneratedKeys();
             if(rs.next()){
@@ -183,7 +218,7 @@ public class Queries {
         try{
             cn=Conexion.getConexion();
             cn.setAutoCommit(false);
-            cs=cn.prepareCall("SELECT id, firstName, lastName, email, alias FROM Users WHERE email LIKE ? OR alias LIKE ? OR firstName LIKE ? OR lastName LIKE ?");
+            cs=cn.prepareCall("SELECT id, firstName, lastName, email, alias, external FROM Users WHERE email LIKE ? OR alias LIKE ? OR firstName LIKE ? OR lastName LIKE ?");
             cs.setString(1, "%" + keyword + "%");
             cs.setString(2, "%" + keyword + "%");
             cs.setString(3, "%" + keyword + "%");
@@ -196,6 +231,7 @@ public class Queries {
                 u.lastName = rs.getString("lastName");
                 u.alias = rs.getString("alias");
                 u.email = rs.getString("email");
+                u.external = rs.getBoolean("external");
                 u.id = rs.getInt("id");
                 results.add(u);
             }
@@ -398,7 +434,7 @@ public class Queries {
              e.printStackTrace();
         }
     }
-        
+            
     public static synchronized Exchange searchExchange(String code){
         Connection cn = null;
         CallableStatement cs = null;
@@ -897,4 +933,78 @@ public class Queries {
         }
         return response;
     }
+    
+    public static synchronized User createExternalFriend(User u) {
+        Connection cn = null;
+        CallableStatement cs = null;
+        int r = -1;
+        ResultSet rs = null;
+        User us = new User();
+        try{
+            cn=Conexion.getConexion();
+            cn.setAutoCommit(false);
+            cs=cn.prepareCall("INSERT INTO Users (firstName, lastName, email, external) values (?, ?, ?, ?)");
+            cs.setString(1, u.firstName);
+            cs.setString(2, u.lastName);
+            cs.setString(3, u.email);
+            cs.setBoolean(4, true);
+            cs.executeUpdate();
+            rs = cs.getGeneratedKeys();
+            if(rs.next()){
+                r=rs.getInt(1);
+                System.out.println("External friend creation generated key " + r);
+            }
+            cn.commit();
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+            us = searchUserById(r);
+        } catch (SQLException e){
+            e.printStackTrace();
+            Conexion.rollback(cn);
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+        } catch (Exception e){
+             e.printStackTrace();
+        }
+        System.out.println("External friend returned by creator: " + us.firstName);
+        return us;
+    }
+    
+    public static synchronized int updateUser(User user) {
+        Connection cn = null;
+        CallableStatement cs = null;
+        int r = -1;
+        ResultSet rs = null;
+        
+        try{
+            cn=Conexion.getConexion();
+            cn.setAutoCommit(false);
+            cs=cn.prepareCall("UPDATE Users SET firstName = ?, lastName = ?, alias = ?, pass = ?, external = ? WHERE id = ?");
+            cs.setString(1, user.firstName);
+            cs.setString(2, user.lastName);
+            cs.setString(3, user.alias);
+            cs.setString(4, user.pass);
+            cs.setBoolean(5, false);
+            cs.setInt(6, user.id);
+            cs.executeUpdate();
+            rs = cs.getGeneratedKeys();
+            if(rs.next()){
+                r=rs.getInt(1);
+                System.out.println("Updated user id: " + r);
+            }
+            cn.commit();
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+        } catch (SQLException e){
+            e.printStackTrace();
+            Conexion.rollback(cn);
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+        } catch (Exception e){
+             e.printStackTrace();
+        }
+        return r;
+    }
+    
+    
 }

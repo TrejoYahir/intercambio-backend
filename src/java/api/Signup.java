@@ -7,18 +7,10 @@ package api;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import database.Conexion;
 import database.Queries;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -47,32 +39,47 @@ public class Signup extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
         
-        ArrayList<User> existingUsers;
+        User existingUser;
         JsonObject resp = new JsonObject();
         String data = Utils.getBody(request);
         Gson gson = new Gson();
         
         System.out.println("data: " + data);
         
-        User user = gson.fromJson(data, User.class);
-        existingUsers = Queries.userExists(user);
-        System.out.println("ExistingUsers size " + existingUsers.size());
+        User usr = gson.fromJson(data, User.class);
+        existingUser = Queries.searchUserByEmail(usr.email);
 
         try (PrintWriter out = response.getWriter();) {
             
-            if(existingUsers.size() > 0) {
-                resp.addProperty("success", false);
-                resp.addProperty("message", "Ya existe un usuario con ese alias o email");
-                resp.addProperty("alias", existingUsers.get(0).alias);
-                resp.addProperty("email", existingUsers.get(0).email);
-                System.out.println("Response: " + resp);
-                System.out.println("Existing user: " + existingUsers.get(0).alias);
-            } else {
-                int id = Queries.createUser(user);
-                if(id != -1) {
+            if(existingUser.id > 0) {
+                System.out.println("Existing user " + existingUser.firstName);
+                if(existingUser.external) {
+                    System.out.println("External user exists");
+                    usr.id = existingUser.id;
+                    Queries.updateUser(usr);
+                    User user = Queries.searchUserById(usr.id);
                     user.pass = null;
-                    user.id = id;
                     String u = gson.toJson(user);
+                    System.out.println("User created");
+                    resp.addProperty("success", true);
+                    resp.addProperty("message", "Usuario creado");
+                    resp.addProperty("user", u);
+                } else {
+                    System.out.println("User already exists");
+                    resp.addProperty("success", false);
+                    resp.addProperty("message", "Ya existe un usuario con ese alias o email");
+                    resp.addProperty("alias", existingUser.alias);
+                    resp.addProperty("email", existingUser.email);
+                    System.out.println("Response: " + resp);
+                    System.out.println("Existing user: " + existingUser.alias);
+                }
+            } else {
+                System.out.println("User doesn't exists");
+                int id = Queries.createUser(usr);
+                if(id != -1) {
+                    usr.pass = null;
+                    usr.id = id;
+                    String u = gson.toJson(usr);
                     System.out.println("User created");
                     resp.addProperty("success", true);
                     resp.addProperty("message", "Usuario creado");

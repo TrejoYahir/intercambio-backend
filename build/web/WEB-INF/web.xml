@@ -76,6 +76,14 @@
         <servlet-name>EditExchange</servlet-name>
         <servlet-class>api.EditExchange</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AddExternalFriend</servlet-name>
+        <servlet-class>api.AddExternalFriend</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GetExternalFriendList</servlet-name>
+        <servlet-class>api.GetExternalFriendList</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Auth</servlet-name>
         <url-pattern>/auth</url-pattern>
@@ -151,6 +159,14 @@
     <servlet-mapping>
         <servlet-name>EditExchange</servlet-name>
         <url-pattern>/edit-exchange</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddExternalFriend</servlet-name>
+        <url-pattern>/add-external-friend</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetExternalFriendList</servlet-name>
+        <url-pattern>/get-external-friend-list</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
