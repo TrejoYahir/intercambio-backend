@@ -8,6 +8,7 @@ package api;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import database.Queries;
+import email.EmailHelper;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -16,6 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import libraries.Utils;
 import models.Participant;
+import models.User;
+import models.Exchange;
 
 /**
  *
@@ -55,6 +58,18 @@ public class AddParticipant extends HttpServlet {
                 resp.addProperty("success", false);
                 resp.addProperty("message", "Error al añadir al intercambio");
             }
+            Exchange e = Queries.searchExchangeById(data.idExchange);
+            User creator  = Queries.searchUserById(e.idCreator);
+            User u = Queries.searchUserById(data.id);
+            String body = Utils.createInviteBody(
+                    e.exchangeName,
+                    u,
+                    creator.firstName + " " + creator.lastName,
+                    e.accessCode,
+                    e.limitDate);
+            String subject = u.firstName + ", has sido invitado a un intercambio";
+            Thread t = new Thread(new EmailHelper(u.email, subject, body));
+            t.start();
             out.print(resp); 
         }
     }

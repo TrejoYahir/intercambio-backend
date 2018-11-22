@@ -84,6 +84,14 @@
         <servlet-name>GetExternalFriendList</servlet-name>
         <servlet-class>api.GetExternalFriendList</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>SelectTheme</servlet-name>
+        <servlet-class>api.SelectTheme</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GetUser</servlet-name>
+        <servlet-class>api.GetUser</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Auth</servlet-name>
         <url-pattern>/auth</url-pattern>
@@ -167,6 +175,14 @@
     <servlet-mapping>
         <servlet-name>GetExternalFriendList</servlet-name>
         <url-pattern>/get-external-friend-list</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SelectTheme</servlet-name>
+        <url-pattern>/select-theme</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetUser</servlet-name>
+        <url-pattern>/get-user</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

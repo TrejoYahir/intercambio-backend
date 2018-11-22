@@ -13,6 +13,7 @@ public class Participant extends User{
     public boolean acceptInvite;
     public boolean isInGroup;
     public int idExchange;
+    public String theme;
 
     public Participant() {
     }

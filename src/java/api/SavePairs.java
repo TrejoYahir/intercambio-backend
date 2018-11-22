@@ -8,6 +8,7 @@ package api;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import database.Queries;
+import email.EmailHelper;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -15,7 +16,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import libraries.Utils;
-import models.Participant;
+import models.Exchange;
+import models.User;
 
 /**
  *
@@ -48,6 +50,16 @@ public class SavePairs extends HttpServlet {
             } else {
                 resp.addProperty("success", false);
                 resp.addProperty("message", "Error al guardar parejas");
+            }
+            for(int[] pair: pairs) {
+                User u1  = Queries.searchUserById(pair[0]);
+                User u2  = Queries.searchUserById(pair[1]);
+                String theme = Queries.searchTheme(u2.id, idExchange);
+                Exchange ex = Queries.searchExchangeById(idExchange);
+                String body = Utils.createPairedBody(u1, u2, theme, ex);
+                String subject = u1.firstName + ", un intercambio está por realizarse.";
+                Thread t = new Thread(new EmailHelper(u1.email, subject, body));
+                t.start();
             }
             out.print(resp); 
         }

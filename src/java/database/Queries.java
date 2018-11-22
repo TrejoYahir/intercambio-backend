@@ -474,6 +474,46 @@ public class Queries {
         return ex;
     }
     
+    public static synchronized Exchange searchExchangeById(int id){
+        Connection cn = null;
+        CallableStatement cs = null;
+        ResultSet rs = null;
+        Exchange ex = new Exchange();
+        
+        try{
+            cn=Conexion.getConexion();
+            cn.setAutoCommit(false);
+            cs=cn.prepareCall("SELECT * FROM Exchanges WHERE id = ?");
+            cs.setInt(1, id);
+            rs=cs.executeQuery();
+            if(rs.next()) {
+                ex.exchangeName = rs.getString("exchangeName");
+                ex.exchangeDescription = rs.getString("exchangeDescription");
+                ex.limitDate = rs.getString("limitDate");
+                ex.exchangeDate = rs.getString("exchangeDate");
+                ex.id = rs.getInt("id");
+                ex.maxAmount = rs.getInt("maxAmount");
+                ex.idCreator = rs.getInt("idCreator");
+                ex.accessCode = rs.getString("accessCode");
+            }
+            cn.commit();
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+            Conexion.closeResultset(rs);
+        } catch (SQLException e){
+            System.err.print("searchUserByLogin sql error" + e);
+            e.printStackTrace();
+            Conexion.rollback(cn);
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+        } catch (Exception e){
+             System.err.print("searchUserByLogin error" + e);
+             e.printStackTrace();
+        }
+        return ex;
+    }
+    
+    
     public static synchronized ArrayList<Exchange> getExchangeList(int id){
         Connection cn = null;
         CallableStatement cs = null;
@@ -586,6 +626,7 @@ public class Queries {
                 p.id = rs.getInt("id");
                 p.acceptInvite = rs.getBoolean("acceptInvite");
                 p.isInGroup = rs.getBoolean("isInGroup");
+                p.theme = rs.getString("theme");
                 results.add(p);
             }
             cn.commit();
@@ -1006,5 +1047,63 @@ public class Queries {
         return r;
     }
     
+    public static synchronized int selectTheme(int user, int exchange, String theme) {
+        //UPDATE ParticipantList SET theme = 'dulces'  WHERE idUser = 5 AND idExchange=8;
+        Connection cn = null;
+        CallableStatement cs = null;
+        int r = -1;
+        
+        try{
+            cn=Conexion.getConexion();
+            cn.setAutoCommit(false);
+            cs=cn.prepareCall("UPDATE ParticipantList SET theme = ? WHERE idUser = ? AND idExchange = ?");
+            cs.setString(1, theme);
+            cs.setInt(2, user);
+            cs.setInt(3, exchange);
+            r = cs.executeUpdate();
+            cn.commit();
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+        } catch (SQLException e){
+            e.printStackTrace();
+            Conexion.rollback(cn);
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+        } catch (Exception e){
+             e.printStackTrace();
+        }
+        return r;
+    }
+    
+    public static synchronized String searchTheme(int idUser, int idExchange){
+        Connection cn = null;
+        CallableStatement cs = null;
+        ResultSet rs = null;
+        String theme = "";
+        
+        try{
+            cn=Conexion.getConexion();
+            cn.setAutoCommit(false);
+            cs=cn.prepareCall("SELECT theme FROM ParticipantList WHERE idUser = ? AND idExchange = ?");
+            cs.setInt(1, idUser);
+            cs.setInt(2, idExchange);
+            rs=cs.executeQuery();
+            if(rs.next()) {
+                theme= rs.getString("theme");
+            }
+            cn.commit();
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+            Conexion.closeResultset(rs);
+        } catch (SQLException e){
+            e.printStackTrace();
+            Conexion.rollback(cn);
+            Conexion.closeStatement(cs);
+            Conexion.closeConexion(cn);
+        } catch (Exception e){
+             e.printStackTrace();
+        }
+        return theme;
+    }
     
 }
